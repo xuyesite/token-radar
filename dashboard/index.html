@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launch Radar — pre-token protocols ranked by fitted implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">TOKEN LAUNCH RADAR &middot; SNAPSHOT 14 NOV 2026</div>
+    <h1>Launch Radar</h1>
+    <p class="sub">Every pre-token protocol in the DeFiLlama snapshot, ranked by expected launch value: a comps-implied value fitted on the snapshot itself, times the cohort launch odds, times a rank-based momentum tilt capped at &plusmn;20%.</p>
+    <p class="meta" id="meta-line">Loading&hellip;</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="strip" id="integrity" aria-label="Model integrity">
+    <div class="card"><div class="k">COMPS CURVE</div><div class="v" id="stat-comps">&ndash;</div><div class="d" id="stat-comps-d"></div></div>
+    <div class="card"><div class="k">FIT QUALITY</div><div class="v" id="stat-r2">&ndash;</div><div class="d" id="stat-r2-d"></div></div>
+    <div class="card"><div class="k">WALK-FORWARD</div><div class="v" id="stat-wf">&ndash;</div><div class="d" id="stat-wf-d"></div></div>
+    <div class="card"><div class="k">LAUNCH ODDS</div><div class="v" id="stat-odds">&ndash;</div><div class="d" id="stat-odds-d"></div></div>
+    <div class="card"><div class="k">COVERAGE</div><div class="v" id="stat-cov">&ndash;</div><div class="d" id="stat-cov-d"></div></div>
+  </section>
+
+  <section class="method" id="method">
+    <h2>How the ranking is built</h2>
+    <ol>
+      <li><b>Implied value.</b> Log market cap is regressed on log TVL over the 128 protocols in this snapshot that already have a token. A pre-token protocol's implied value is what the curve predicts for its TVL. TVL alone explains about a fifth of the variation &mdash; the board says so, and the error band is shown on every row.</li>
+      <li><b>Launch odds.</b> The snapshot's own record: how often protocols of this age and kind have launched a token. Older protocols launch more often; some categories (basis trading, RWA) launch far more often than others (risk curators, yield aggregators). Both the age rate and the category effect are shrunk toward the overall rate, because the unshrunk versions lose to a constant base rate out of sample &mdash; the shrunk odds beat it (split-half Brier 0.135 vs 0.141).</li>
+      <li><b>Momentum tilt.</b> The 7-day TVL change is used only as a rank &mdash; top of the ranking +20%, bottom &minus;20% &mdash; because the field's scale is not credible: its median absolute value is 879% and its maximum is 444,800%. A protocol that is shrinking does not get to hide behind a big TVL.</li>
+    </ol>
+    <p class="fine">Expected value = implied value &times; launch odds &times; momentum tilt. &ldquo;No token recorded&rdquo; means the snapshot lists no CoinGecko id and no symbol &mdash; it is not a claim that no token exists. Farm costs are rough public-network estimates, not quotes, and no plan promises an airdrop.</p>
+    <table class="odds" id="odds-table">
+      <thead><tr><th>Age</th><th>Protocols</th><th>Launched</th><th>Launch rate</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="controls">
+    <input id="q" type="search" placeholder="Search protocol&hellip;" aria-label="Search protocols">
+    <select id="cat" aria-label="Filter by category"><option value="">All categories</option></select>
+    <select id="chain" aria-label="Filter by chain"><option value="">All chains</option></select>
+    <select id="sort" aria-label="Sort by">
+      <option value="expected">Sort: expected value</option>
+      <option value="implied">Sort: implied value</option>
+      <option value="tvl">Sort: TVL</option>
+      <option value="odds">Sort: launch odds</option>
+      <option value="age">Sort: age</option>
+    </select>
+    <label class="wl"><input id="wl" type="checkbox"> Watchlist only</label>
+    <span class="count" id="count"></span>
+  </section>
+
+  <section class="detail" id="detail" hidden></section>
+
+  <section class="tablewrap">
+    <table class="board" id="board">
+      <thead><tr>
+        <th class="num">#</th><th>Protocol</th><th>Category</th><th>Chains</th>
+        <th class="num">TVL</th><th class="num">7d</th><th class="num">Age</th>
+        <th class="num">Odds</th><th class="num">Implied</th><th class="num">Expected</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>Source: DeFiLlama protocol snapshot, 14 Nov 2026 (758 protocols, 40 on the watchlist). Universe: 198 protocols with no token recorded, excluding wrapped, staked and bridged products, versioned pools and centralised exchanges. Model and farm plans are computed from the snapshot by the entry's own code; nothing here is a price target or financial advice.</p>
+  </footer>
+</main>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
