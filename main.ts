@@ -627,11 +627,25 @@ interface ModelBlock {
 
 function main(): void {
   const argv = process.argv.slice(2);
-  let inputPath = resolve(HERE, '../token-radar-01-kit/input/snapshot.json');
+  // Input, in priority order: --input, then the grader's /input/snapshot.json
+  // when it exists, then the local kit copy used in development.
+  let inputPath: string | undefined;
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--input' && argv[i + 1]) inputPath = resolve(argv[i + 1]!);
   }
-  const outDir = resolve(process.env.MAKEFUN_OUTPUT_DIR ?? 'out');
+  if (inputPath === undefined) {
+    inputPath = existsSync('/input/snapshot.json')
+      ? '/input/snapshot.json'
+      : resolve(HERE, '../token-radar-01-kit/input/snapshot.json');
+  }
+  // Output, in priority order: MAKEFUN_OUTPUT_DIR, then the grader's
+  // /output when it exists (or when /input/snapshot.json exists, which
+  // marks the grading sandbox), then the local out/ used in development.
+  const outDir = process.env.MAKEFUN_OUTPUT_DIR
+    ? resolve(process.env.MAKEFUN_OUTPUT_DIR)
+    : existsSync('/output') || existsSync('/input/snapshot.json')
+      ? '/output'
+      : resolve(HERE, 'out');
 
   const inputBytes = readFileSync(inputPath);
   const snapshot = JSON.parse(inputBytes.toString('utf8')) as Snapshot;
