@@ -12,6 +12,7 @@ const ok = (cond, msg) => { console.log((cond ? 'PASS' : 'FAIL') + ' ' + msg); i
 ok(board.schema === 'makefun/board/v1', 'schema');
 ok(board.title.length <= 200 && !/xuyesite|token-radar/i.test(board.title), 'title clean, len ' + board.title.length);
 ok(board.board.length >= 100 && board.board.length <= 4000, 'board rows ' + board.board.length);
+ok(Array.isArray(board.rows) && board.rows.length === board.board.length && JSON.stringify(board.rows) === JSON.stringify(board.board), 'rows key present, identical to board (gate reads rows)');
 const wl = new Set(snap.watchlist);
 ok(wl.size === 40 && [...wl].every(s => board.board.some(r => r.slug === s)), 'watchlist 40/40');
 ok(board.board.every((r, i) => r.rank === i + 1), 'ranks 1..N');

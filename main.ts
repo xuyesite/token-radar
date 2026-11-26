@@ -743,6 +743,11 @@ function main(): void {
       floor_usd: snapshot.floor_usd,
     },
     model,
+    // The sealed gate reads board.json's `rows` key (RULES.txt, and the
+    // starter writes { rows: board }). The first submission wrote only
+    // `board` and the gate found no rows: Development valid 0. Keep `board`
+    // too — verify-entry.mjs and the dashboard tooling read it.
+    rows,
     board: rows,
     note: NOTE,
   };
